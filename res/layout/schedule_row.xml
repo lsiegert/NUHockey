@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	android:id="@+id/widget29"
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:weightSum="100"
+>
+	<TextView
+		android:id="@+id/date"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:gravity="center_vertical"
+		android:text="Date"
+		android:layout_weight="31"
+	>
+	</TextView>
+	<TextView
+		android:id="@+id/opponent"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:gravity="center_vertical"
+		android:text="Opponent"
+		android:layout_weight="44"
+	>
+	</TextView>
+	<TextView
+		android:id="@+id/score"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:gravity="center_vertical"
+		android:text="Score"
+		android:layout_weight="10"
+	>
+	</TextView>
+	<CheckBox
+		android:id="@+id/attended"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:gravity="right"
+		android:layout_weight="15"
+	>
+	</CheckBox>
+</LinearLayout>
