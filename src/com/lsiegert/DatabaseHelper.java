@@ -130,6 +130,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return myDb.query("Games", null, null, null, null, null, "date");
 	}
 	
+	public Cursor getAllSeasons() {
+		String query = "select distinct season from Games";
+		return myDb.rawQuery(query, null);
+	}
+	
 	// location should be either home, away, or neutral
 	public Cursor getGamesByLocation(String location) {
 		return myDb.query("Games", null, "location = ?", new String[]{location}, null, null, "date");
