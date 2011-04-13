@@ -131,7 +131,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	}
 	
 	public Cursor getAllSeasons() {
-		String query = "select distinct season from Games";
+		String query = "select distinct season from Games order by season desc";
 		return myDb.rawQuery(query, null);
 	}
 	

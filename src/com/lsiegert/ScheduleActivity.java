@@ -23,11 +23,18 @@ public class ScheduleActivity extends ListActivity {
 
 		dbHelper.openDatabase();
 		
-		Cursor games = dbHelper.getAllGames();
+		SeparatedListAdapter adapter = new SeparatedListAdapter(this);
+		Cursor seasons = dbHelper.getAllSeasons();
 		
-		startManagingCursor(games);
-		ScheduleAdapter adapter = new ScheduleAdapter(this, R.layout.schedule_row, games, null, null, dbHelper);
-
+		seasons.moveToFirst();
+		while (!seasons.isAfterLast()) {
+			String season = seasons.getString(0);
+			Cursor games = dbHelper.getGamesBySeason(season);
+			ScheduleAdapter scheduleAdapter = new ScheduleAdapter(this, R.layout.schedule_row, games, null, null, dbHelper);
+			adapter.addSection(season, scheduleAdapter);
+			seasons.moveToNext();
+		}
+		
 		setListAdapter(adapter);
     }
 	
