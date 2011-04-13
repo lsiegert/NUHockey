@@ -3,6 +3,7 @@ package com.lsiegert;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,17 @@ public class ScheduleAdapter extends SimpleCursorAdapter implements OnClickListe
 		}
 		
 		TextView gameScore = (TextView) convertView.findViewById(R.id.score);
-		gameScore.setText(games.getString(4) + "-" + games.getString(5));
+		int nuscore = games.getInt(4);
+		int oppscore = games.getInt(5);
+		
+		gameScore.setText(nuscore + "-" + oppscore);
+		if (nuscore > oppscore) {
+			gameScore.setTextColor(Color.GREEN);
+		}
+		else if (nuscore < oppscore) {
+			gameScore.setTextColor(Color.RED);
+		}		
+		else { gameScore.setTextColor(Color.WHITE); }
 		
 		CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.attended);
 		checkBox.setTag(Integer.parseInt(this.games.getString(this.games.getColumnIndex("_id"))));

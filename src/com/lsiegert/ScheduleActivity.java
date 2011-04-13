@@ -25,11 +25,13 @@ public class ScheduleActivity extends ListActivity {
 		
 		SeparatedListAdapter adapter = new SeparatedListAdapter(this);
 		Cursor seasons = dbHelper.getAllSeasons();
+		startManagingCursor(seasons);
 		
 		seasons.moveToFirst();
 		while (!seasons.isAfterLast()) {
 			String season = seasons.getString(0);
 			Cursor games = dbHelper.getGamesBySeason(season);
+			startManagingCursor(games);
 			ScheduleAdapter scheduleAdapter = new ScheduleAdapter(this, R.layout.schedule_row, games, null, null, dbHelper);
 			adapter.addSection(season, scheduleAdapter);
 			seasons.moveToNext();
@@ -37,6 +39,4 @@ public class ScheduleActivity extends ListActivity {
 		
 		setListAdapter(adapter);
     }
-	
-	
 }

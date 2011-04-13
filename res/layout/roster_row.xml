@@ -1,56 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-	android:id="@+id/widget29"
+<LinearLayout
+	android:id="@+id/widget2"
+	android:orientation="horizontal"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:weightSum="100"
 >
 	<TextView
-		android:id="@+id/number"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+	android:id="@+id/number"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:gravity="center_vertical"
 		android:text="Number"
-		android:gravity="left"
-		android:layout_alignParentTop="true"
-		android:layout_alignParentLeft="true"
+		android:layout_weight="10"
 	>
 	</TextView>
 	<TextView
 		android:id="@+id/name"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:gravity="center_vertical"
 		android:text="Name"
-		android:layout_toRightOf="@+id/number"
-		android:layout_marginLeft="8px"
+		android:layout_weight="41"
 	>
 	</TextView>
 	<TextView
 		android:id="@+id/position"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:gravity="center_vertical"
 		android:text="Position"
-		android:layout_below="@+id/number"
-		android:layout_alignParentLeft="true"
+		android:layout_weight="5"
 	>
 	</TextView>
 	<TextView
 		android:id="@+id/year"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:gravity="center_vertical"
 		android:text="Year"
-		android:layout_below="@+id/name"
-		android:layout_toRightOf="@+id/position"
-		android:layout_marginLeft="8px"
+		android:layout_weight="8"
 	>
 	</TextView>
 	<TextView
 		android:id="@+id/hometown"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:gravity="center_vertical"
 		android:text="Hometown"
-		android:layout_below="@+id/name"
-		android:layout_toRightOf="@+id/year"
-		android:layout_marginLeft="8px"
+		android:layout_weight="36"
 	>
 	</TextView>
-</RelativeLayout>
+</LinearLayout>

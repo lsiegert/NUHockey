@@ -29,8 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
      * @param context
      */
     public DatabaseHelper(Context context) {
- 
-    	super(context, DB_NAME, null, 1);
+    	super(context, DB_NAME, null, R.string.databaseVersion);
         this.myContext = context;
     }	
  
@@ -42,7 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     	boolean dbExists = checkDatabase();
     	SQLiteDatabase db_Read = null;
  
-    	if(dbExists){
+    	if(false){
     		//do nothing - database already exists
     	}else{
     		db_Read = this.getReadableDatabase(); 
@@ -145,7 +144,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return myDb.query("Games", null, "season = ?", new String[]{season}, null, null, "date");
 	}
 	
-	// W-L-T record across games the user has attended
+	// W-L-T record across all games the user has attended
 	public String getRecord() {
 		String wins = "select _id from Games where nuscore > oppscore and attended=1";
 		String losses = "select _id from Games where nuscore < oppscore and attended=1";
@@ -156,9 +155,43 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return w + "-" + l + "-" + t;
 	}
 	
-	// total number of goals in games the user has attended
-	public int getTotalGoalsSeen() {
-		Cursor goals = myDb.rawQuery("select sum(nuscore) from Games where attended=1", null);
-		return goals.getInt(0);
+	// W-L-T record across games the user has attended, by location
+	public String getRecordByLocation(String location){
+		String wins = "select _id from Games where nuscore > oppscore and attended=1 and location=?";
+		String losses = "select _id from Games where nuscore < oppscore and attended=1 and location=?";
+		String ties = "select _id from Games where nuscore = oppscore and attended=1 and location=?";
+		String[] args = new String[]{location};
+		int w = myDb.rawQuery(wins, args).getCount();
+		int l = myDb.rawQuery(losses, args).getCount();
+		int t = myDb.rawQuery(ties, args).getCount();
+		return w + "-" + l + "-" + t;
+	}
+	
+	public int getNumOfTeams() {
+		String query = "select distinct opponent from Games where attended=1";
+		return myDb.rawQuery(query, null).getCount();
+	}
+	
+	public int getNumOfGoals() {
+		String query = "select nuscore from Games where attended=1";
+		Cursor allGoals = myDb.rawQuery(query, null);
+		allGoals.moveToFirst();
+		int totalGoals = 0;
+		while (!allGoals.isAfterLast()) {
+			totalGoals = totalGoals + allGoals.getInt(0);
+			allGoals.moveToNext();
+		}
+		return totalGoals;
+	}
+	
+	public int getNumOfShutouts() {
+		String query = "select _id from Games where attended=1 and oppscore=0";
+		return myDb.rawQuery(query, null).getCount();
+	}
+	
+	public int getNumOfWinsAtAgganis() {
+		String query ="select _id from Games where attended=1 and " +
+				"nuscore>oppscore and opponent='boston university' and location='away'";
+		return myDb.rawQuery(query, null).getCount();
 	}
 }

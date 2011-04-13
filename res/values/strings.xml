@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, NUHockey!</string>
     <string name="app_name">Northeastern Hockey</string>
 	<string name="roster">Roster</string>
 	<string name="schedule">Schedule</string>
 	<string name="rss">RSS</string>
 	<string name="stats">Your Stats</string>
 	<string name="season_prompt">Select a season</string>
-	<item type="string" name="databaseVersion" format="integer">2</item>
+	<item type="string" name="databaseVersion" format="integer">3</item>
 </resources>
