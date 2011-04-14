@@ -41,7 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     	boolean dbExists = checkDatabase();
     	SQLiteDatabase db_Read = null;
  
-    	if(false){
+    	if(dbExists){
     		//do nothing - database already exists
     	}else{
     		db_Read = this.getReadableDatabase(); 

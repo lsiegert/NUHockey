@@ -6,17 +6,14 @@ import java.util.Map;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 public class StatsActivity extends ListActivity {
 	private DatabaseHelper dbHelper = null;
-	private ListView listView = null;
-
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        listView = getListView();
+        getListView();
         
         if (dbHelper == null) {
         	dbHelper = new DatabaseHelper(this);
@@ -48,7 +45,7 @@ public class StatsActivity extends ListActivity {
     
         // create our list and custom adapter  
         SeparatedListAdapter adapter = new SeparatedListAdapter(this);
-        adapter.addSection("Records", new ArrayAdapter<String>(this,  
+        adapter.addSection("Team's Record", new ArrayAdapter<String>(this,  
             R.layout.list_item, new String[] { "Overall: " + record,
         									   "Home: " + homeRecord,
         									   "Away: " + awayRecord,
