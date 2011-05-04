@@ -5,6 +5,5 @@
 	<string name="schedule">Schedule</string>
 	<string name="rss">RSS</string>
 	<string name="stats">Your Stats</string>
-	<string name="season_prompt">Select a season</string>
-	<item type="string" name="databaseVersion" format="integer">3</item>
+	<item type="string" name="databaseVersion" format="integer">5</item>
 </resources>

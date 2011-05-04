@@ -63,7 +63,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     private boolean checkDatabase(){
  
     	SQLiteDatabase checkDB = null;
- 
     	try{
     		String myPath = DB_PATH + DB_NAME;
     		checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
@@ -77,6 +76,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     	}
  
     	return checkDB != null ? true : false;
+    	
     }
  
     /**
