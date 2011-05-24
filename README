@@ -1,5 +1,13 @@
-Android application for the Northeastern University men's ice hockey team. Includes roster, schedule, RSS feed.  
+Android application for the Northeastern University men's ice hockey
+team. Includes roster, schedule, RSS feed.  
 
-I started this as my semester project for Martin Schedlbauer's spring 2011 Human/computer interaction course at Northeastern. We were allowed to make an Android app as long as we used HCI concepts like prototyping and evaluations. The main reason I wanted to do this app is that I wanted an easier way to keep track of all the games I'd been to.
+I started this as my semester project for Martin Schedlbauer's spring
+2011 Human/computer interaction course at Northeastern. We were allowed
+to make an Android app as long as we used HCI concepts like prototyping
+and evaluation. The main reason I wanted to do this app is that I wanted
+an easier way to keep track of all the games I'd been to.
 
-Main issue right now is getting the checkboxes on the schedule (used to mark games as attended) to show the correct state. Checking one updates the database automatically but sometimes if you scroll down the schedule and then back up, the checked ones disappear.
+Main issue right now is getting the checkboxes on the schedule (used to
+mark games as attended) to show the correct state. Checking one updates
+the database automatically but sometimes if you scroll down the schedule
+and then back up, the checked ones disappear.
