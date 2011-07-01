@@ -76,22 +76,16 @@ public class ScheduleAdapter extends SimpleCursorAdapter implements OnClickListe
 		else { gameScore.setTextColor(Color.WHITE); }
 		
 		CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.attended);
-		
-		int tag = Integer.parseInt(this.games.getString(this.games.getColumnIndex("_id")));
-		checkBox.setTag(tag);
+		checkBox.setTag(Integer.parseInt(this.games.getString(this.games.getColumnIndex("_id"))));
 
-		String attended = this.games.getString(this.games.getColumnIndex("attended"));
-		if (attended != null && Integer.parseInt(attended) != 0) {
-			checkBox.setOnCheckedChangeListener(null);
+		if (this.games.getString(this.games.getColumnIndex("attended")) != null
+				&& Integer.parseInt(this.games.getString(this.games.getColumnIndex("attended"))) != 0) {
 			checkBox.setChecked(true);
 		} else {
-			checkBox.setOnCheckedChangeListener(null);
 			checkBox.setChecked(false);
 		}
 		checkBox.setOnClickListener(this);
 		
-		System.out.println(this.games.getString(this.games.getColumnIndex("attended")));
-		//System.out.println(tag + " " + checkBox.isChecked() + " " + attended);
 		return convertView;
 	}
 
@@ -102,5 +96,6 @@ public class ScheduleAdapter extends SimpleCursorAdapter implements OnClickListe
 		ContentValues values = new ContentValues();
 		values.put(" attended", checkbox.isChecked() ? 1 : 0);
 		this.dbHelper.myDb.update("Games", values, "_id=?", new String[]{Integer.toString(_id)});
+		games.requery();
 	}
 }
