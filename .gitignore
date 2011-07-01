@@ -4,5 +4,3 @@ bin/
 .settings/
 .classpath
 .project
-
-res/.DS_Store

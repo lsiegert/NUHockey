@@ -4,6 +4,7 @@ import android.app.ListActivity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 public class ScheduleActivity extends ListActivity {
 	private DatabaseHelper dbHelper = null;
@@ -32,8 +33,11 @@ public class ScheduleActivity extends ListActivity {
 			String season = seasons.getString(0);
 			Cursor games = dbHelper.getGamesBySeason(season);
 			startManagingCursor(games);
-			ScheduleAdapter scheduleAdapter = new ScheduleAdapter(this, R.layout.schedule_row, games, null, null, dbHelper);
-			adapter.addSection(season, scheduleAdapter);
+			//ScheduleAdapter scheduleAdapter = new ScheduleAdapter(this, R.layout.schedule_row, games, null, null, dbHelper);
+			SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.schedule_row, games, null, null);
+			ScheduleViewBinder viewBinder = new ScheduleViewBinder();
+			cursorAdapter.setViewBinder(viewBinder);
+			adapter.addSection(season, cursorAdapter);
 			seasons.moveToNext();
 		}
 		
