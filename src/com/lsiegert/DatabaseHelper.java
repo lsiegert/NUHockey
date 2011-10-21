@@ -44,7 +44,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     	if(dbExists){
     		//do nothing - database already exists
     	}else{
-    		db_Read = this.getReadableDatabase(); 
+    		db_Read = this.getReadableDatabase();
     		db_Read.close();
  
         	try {
@@ -189,7 +189,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return myDb.rawQuery(query, null).getCount();
 	}
 	
-	public int getNumOfWinsAtAgganis() {
+	public int getNumOfWinsAtagganis() {
 		String query ="select _id from Games where attended=1 and " +
 				"nuscore>oppscore and opponent='boston university' and location='away'";
 		return myDb.rawQuery(query, null).getCount();

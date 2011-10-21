@@ -38,7 +38,7 @@ public class StatsActivity extends ListActivity {
     	String homeRecord = dbHelper.getRecordByLocation("home");
     	String awayRecord = dbHelper.getRecordByLocation("away");
     	String neutralRecord = dbHelper.getRecordByLocation("neutral");
-    	int winsAtAgganis = dbHelper.getNumOfWinsAtAgganis();
+    	int winsAtAgganis = dbHelper.getNumOfWinsAtagganis();
     	int numTeams = dbHelper.getNumOfTeams();
     	int goals = dbHelper.getNumOfGoals();
     	int shutouts = dbHelper.getNumOfShutouts();
