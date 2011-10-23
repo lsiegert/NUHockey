@@ -15,14 +15,14 @@ import android.widget.TextView;
 public class ScheduleAdapter extends SimpleCursorAdapter implements OnClickListener{
 	private Context context;
 	private Cursor games;
-	private DatabaseHelper dbHelper;
+	private GamesDbAdapter dbHelper;
 
 	public ScheduleAdapter(Context context,
 							int layout,
 							Cursor c,
 							String[] from,
 							int[] to,
-							DatabaseHelper dbHelper) {
+							GamesDbAdapter dbHelper) {
 		super(context, 0, c, new String[0], new int[0]);
 		this.context = context;
 		this.games = c;
@@ -47,11 +47,11 @@ public class ScheduleAdapter extends SimpleCursorAdapter implements OnClickListe
 		}
 
 		TextView gameDate = (TextView) convertView.findViewById(R.id.date);
-		gameDate.setText(games.getString(1));
+		gameDate.setText(games.getString(games.getColumnIndex("date")));
 		
 		TextView gameOpponent = (TextView) convertView.findViewById(R.id.opponent);
-		String location = games.getString(7);
-		String opponent = games.getString(3);
+		String location = games.getString(games.getColumnIndex("location"));
+		String opponent = games.getString(games.getColumnIndex("opponent"));
 		if (location.contains("home")) {
 			gameOpponent.setText("vs " + opponent);
 		}
@@ -63,17 +63,22 @@ public class ScheduleAdapter extends SimpleCursorAdapter implements OnClickListe
 		}
 		
 		TextView gameScore = (TextView) convertView.findViewById(R.id.score);
-		int nuscore = games.getInt(4);
-		int oppscore = games.getInt(5);
+		int nuscore = games.getInt(games.getColumnIndex("nuscore"));
+		int oppscore = games.getInt(games.getColumnIndex("oppscore"));
 		
-		gameScore.setText(nuscore + "-" + oppscore);
-		if (nuscore > oppscore) {
-			gameScore.setTextColor(Color.GREEN);
+		if (nuscore < 0 || oppscore < 0) {
+			gameScore.setText("");
+		} else {
+			gameScore.setText(nuscore + "-" + oppscore);
+			
+			if (nuscore > oppscore) {
+				gameScore.setTextColor(Color.GREEN);
+			} else if (nuscore < oppscore) {
+				gameScore.setTextColor(Color.RED);
+			} else {
+				gameScore.setTextColor(Color.WHITE);
+			}
 		}
-		else if (nuscore < oppscore) {
-			gameScore.setTextColor(Color.RED);
-		}		
-		else { gameScore.setTextColor(Color.WHITE); }
 		
 		CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.attended);
 		checkBox.setTag(Integer.parseInt(this.games.getString(this.games.getColumnIndex("_id"))));
@@ -92,10 +97,9 @@ public class ScheduleAdapter extends SimpleCursorAdapter implements OnClickListe
 	public void onClick(View view) {
 		CheckBox checkbox = (CheckBox) view;
 		Integer _id = (Integer) checkbox.getTag();
-		
-		ContentValues values = new ContentValues();
-		values.put(" attended", checkbox.isChecked() ? 1 : 0);
-		this.dbHelper.myDb.update("Games", values, "_id=?", new String[]{Integer.toString(_id)});
-		games.requery();
+		boolean toggled = dbHelper.toggleAttended(_id, checkbox.isChecked());
+		if (toggled) {
+			games.requery();
+		}
 	}
 }

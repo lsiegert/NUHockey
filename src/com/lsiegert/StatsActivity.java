@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 
 public class StatsActivity extends ListActivity {
-	private DatabaseHelper dbHelper = null;
+	private GamesDbAdapter dbHelper = null;
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,10 +16,10 @@ public class StatsActivity extends ListActivity {
         getListView();
         
         if (dbHelper == null) {
-        	dbHelper = new DatabaseHelper(this);
+        	dbHelper = new GamesDbAdapter(this);
         }
 
-		dbHelper.openDatabase();
+		dbHelper.open();
     }
 
 	public final static String ITEM_TITLE = "title";  

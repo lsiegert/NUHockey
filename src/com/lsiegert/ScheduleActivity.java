@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.widget.ListView;
 
 public class ScheduleActivity extends ListActivity {
-	private DatabaseHelper dbHelper = null;
+	private GamesDbAdapter dbHelper = null;
 	private ListView listView = null;
 
 	@Override
@@ -18,10 +18,10 @@ public class ScheduleActivity extends ListActivity {
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         
         if (dbHelper == null) {
-        	dbHelper = new DatabaseHelper(this);
+        	dbHelper = new GamesDbAdapter(this);
         }
 
-		dbHelper.openDatabase();
+		dbHelper.open();
 		
 		SeparatedListAdapter adapter = new SeparatedListAdapter(this);
 		Cursor seasons = dbHelper.getAllSeasons();

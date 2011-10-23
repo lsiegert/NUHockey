@@ -14,10 +14,10 @@ public class RosterActivity extends Activity {
         
         ListView list = (ListView) findViewById(R.id.RosterListView);
         
-        DatabaseHelper myDbHelper = new DatabaseHelper(this);
+        GamesDbAdapter myDbHelper = new GamesDbAdapter(this);
 
 		try {
-			myDbHelper.openDatabase();
+			myDbHelper.open();
 		} catch(SQLException sqle){
 			throw sqle;
 		}

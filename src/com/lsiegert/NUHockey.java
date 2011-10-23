@@ -4,9 +4,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +21,12 @@ import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TabHost;
 
 public class NUHockey extends TabActivity {
+	private static final String TAG = "NUHockey";
+	
        /** Called when the activity is first created. */
        @Override
        public void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,7 @@ public class NUHockey extends TabActivity {
                try {
 				checkForUpdates();
                } catch (Exception e) {
-				e.printStackTrace();
+				Log.e(TAG, "Checking for updates failed: " + e.getMessage());
                }
 
                Resources res = getResources();
@@ -83,52 +86,65 @@ public class NUHockey extends TabActivity {
    }
 
    private void checkForGameUpdates() throws Exception {
-
-       GamesDbAdapter gamesDba = new GamesDbAdapter(this);
-       gamesDba.open();
-
-       // First, let's look and see how long ago we last checked
-       // If it was more than 3 days ago, let's fetch updates. Otherwise, finish.
-       
-
        // If fetching, let's tell the user we are doing something. Show a waiting thing.
        ProgressDialog dialog = ProgressDialog.show(NUHockey.this, "", 
                "Fetching game updates...", true);
-
-       // Let's get the list of updates from our server
-       List<Map<String,String>> updates = fetchGameUpdates(gamesDba.getLastUpdated());;
-
-       // Once we have them, remember the exact time.
-       Date now = new Date();
-
-       // For each update, determine what the hell it wants us to do and apply it to the gamesDba
-       for (int i = 0; i < updates.size(); i++) {
-    	   Map<String,String> game = updates.get(i);
-    	   String op = game.get("operation");
-    	   int id = Integer.parseInt(game.get("id"));
-    	   String date = game.get("date");
-    	   String opponent = game.get("opponent");
-    	   String season = game.get("season");
-    	   int nuscore = Integer.parseInt(game.get("nuscore"));
-    	   int oppscore = Integer.parseInt(game.get("oppscore"));
-    	   String location = game.get("location");
+       
+       GamesDbAdapter gamesDba = new GamesDbAdapter(this);
+       
+       try {
+    	   Log.d(TAG, "starting game updates");
+    	   gamesDba.open();
     	   
-    	   if (op=="new") {
-    		   gamesDba.createGame(id, date, season, opponent, nuscore, oppscore, location);
-    	   } else if (op=="update") {
-    		   // update game
-    		   gamesDba.updateGame(id, date, season, opponent, nuscore, oppscore, location);
-    	   } else if (op=="deleted") {
-    		   gamesDba.deleteGame(id);
-    	   }
+	       // First, let's look and see how long ago we last checked
+	       // If it was more than 3 days ago, let's fetch updates. Otherwise, finish.
+	
+	       // Let's get the list of updates from our server
+	       List<Map<String,String>> updates = fetchGameUpdates(gamesDba.getLastUpdated());;
+	
+	       // Once we have them, remember the exact time.
+	       Date now = new Date();
+	
+	       // For each update, determine what the hell it wants us to do and apply it to the gamesDba
+	       for (int i = 0; i < updates.size(); i++) {
+	    	   Map<String,String> game = updates.get(i);
+	    	   String op = game.get("operation");
+	    	   int id = Integer.parseInt(game.get("id"));
+	    	   String date = game.get("date");
+	    	   String opponent = game.get("opponent");
+	    	   String season = game.get("season");
+	    	   int nuscore = parseOrInvalid(game.get("nuscore"));
+	    	   int oppscore = parseOrInvalid(game.get("oppscore"));
+	    	   String location = game.get("location");
+	    	   
+	    	   if (op.equalsIgnoreCase("NEW")) {
+	    		   Log.d(TAG, "Creating game: " + id);
+	    		   gamesDba.createGame(id, date, season, opponent, nuscore, oppscore, location);
+	    	   } else if (op.equalsIgnoreCase("UPDATED")) {
+	    		   Log.d(TAG, "Updating game: " + id);
+	    		   gamesDba.updateGame(id, date, season, opponent, nuscore, oppscore, location);
+	    	   } else if (op.equalsIgnoreCase("DELETED")) {
+	    		   Log.d(TAG, "Deleting game: " + id);
+	    		   gamesDba.deleteGame(id);
+	    	   }
+	       }
+	       
+	       // When finished, this was the last time we updated. Save.
+	       gamesDba.saveLastUpdated(now);
+       } finally {
+    	   gamesDba.close();
+    	   dialog.dismiss();
        }
-
-       // When finished, this was the last time we updated. Save.
-       gamesDba.saveLastUpdated(now);
-       gamesDba.close();
-       dialog.dismiss();
    }
 
+   private int parseOrInvalid(String s) {
+	   try {
+		   return Integer.parseInt(s);
+	   } catch(NumberFormatException e) {
+		   return -1;
+	   }
+   }
+   
    private List<Map<String,String>> fetchGameUpdates(Date lastChecked) throws Exception {
 	   BufferedReader in = null;
 	   SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -140,7 +156,9 @@ public class NUHockey extends TabActivity {
 	   HttpGet request = new HttpGet();
 	   URI uri = new URI("http://morning-planet-4215.heroku.com/gameupdates/" + date + ".txt");
 	   request.setURI(uri);
+	   Log.d(TAG, "Making the request to " + uri.toString());
 	   HttpResponse response = client.execute(request);
+	   Log.d(TAG, "Response: " + response.getStatusLine().toString());
 	   
 	   InputStream content = response.getEntity().getContent();
 	   in = new BufferedReader(new InputStreamReader(content));
@@ -149,17 +167,22 @@ public class NUHockey extends TabActivity {
 	   
        // We are going to get some sort of lines. For each line, create a Map.
 	   while ((line = in.readLine()) != null) {
+		   Log.d(TAG, "Parsing line: " + line);
 		   Map<String,String> m = new HashMap<String,String>();
 		   String[] parts = line.split(",");
-		   m.put("operation", parts[0]);
-		   m.put("id", parts[1]);
-		   m.put("date", parts[2]);
-		   m.put("opponent", parts[3]);
-		   m.put("season", parts[4]);
-		   m.put("nuscore", parts[5]);
-		   m.put("oppscore", parts[6]);
-		   m.put("location", parts[7]);
-		   updates.add(m);
+		   if (parts.length == 8) {
+			   m.put("operation", parts[0]);
+			   m.put("id", parts[1]);
+			   m.put("date", parts[2]);
+			   m.put("season", parts[3]);
+			   m.put("opponent", parts[4]);
+			   m.put("nuscore", parts[5]);
+			   m.put("oppscore", parts[6]);
+			   m.put("location", parts[7]);
+			   updates.add(m);
+		   } else {
+			   Log.e(TAG, "Line doesn't have 8 parts");
+		   }
 	   }
        // Return a list of Maps that can be used by the methods of gamesDba
 	   return updates;
