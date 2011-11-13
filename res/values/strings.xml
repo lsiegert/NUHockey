@@ -5,5 +5,10 @@
 	<string name="schedule">Schedule</string>
 	<string name="rss">RSS</string>
 	<string name="stats">Your Stats</string>
+	<string name="info">Info</string>
+	<string name="update">Update</string>
+	<string name="info_text">Check off the games you\'ve been to on the Schedule tab.</string>
+	<string name="changeseason">Change Season</string>
+	<string name="sort">Sort</string>
 	<item type="string" name="databaseVersion" format="integer">5</item>
 </resources>
