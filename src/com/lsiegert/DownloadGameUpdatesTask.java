@@ -79,13 +79,14 @@ public class DownloadGameUpdatesTask extends AsyncTask<Void, Void, Void> {
 				int nuscore = parseOrInvalid(game.get("nuscore"));
 				int oppscore = parseOrInvalid(game.get("oppscore"));
 				String location = game.get("location");
+				boolean overtime = Boolean.parseBoolean(game.get("overtime"));
 
 				if (op.equalsIgnoreCase("NEW")) {
 					Log.d(TAG, "Creating game: " + id);
-					gamesDba.createGame(id, date, season, opponent, nuscore, oppscore, location);
+					gamesDba.createGame(id, date, season, opponent, nuscore, oppscore, location, overtime);
 				} else if (op.equalsIgnoreCase("UPDATED")) {
 					Log.d(TAG, "Updating game: " + id);
-					gamesDba.updateGame(id, date, season, opponent, nuscore, oppscore, location);
+					gamesDba.updateGame(id, date, season, opponent, nuscore, oppscore, location, overtime);
 				} else if (op.equalsIgnoreCase("DELETED")) {
 					Log.d(TAG, "Deleting game: " + id);
 					gamesDba.deleteGame(id);
@@ -133,7 +134,7 @@ public class DownloadGameUpdatesTask extends AsyncTask<Void, Void, Void> {
 			Log.d(TAG, "Parsing line: " + line);
 			Map<String,String> m = new HashMap<String,String>();
 			String[] parts = line.split(",");
-			if (parts.length == 8) {
+			if (parts.length == 9) {
 				m.put("operation", parts[0]);
 				m.put("id", parts[1]);
 				m.put("date", parts[2]);
@@ -142,9 +143,10 @@ public class DownloadGameUpdatesTask extends AsyncTask<Void, Void, Void> {
 				m.put("nuscore", parts[5]);
 				m.put("oppscore", parts[6]);
 				m.put("location", parts[7]);
+				m.put("overtime", parts[8]);
 				updates.add(m);
 			} else {
-				Log.e(TAG, "Line doesn't have 8 parts");
+				Log.e(TAG, "Line doesn't have 9 parts");
 			}
 		}
 		// Return a list of Maps that can be used by the methods of gamesDba

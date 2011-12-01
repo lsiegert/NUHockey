@@ -64,11 +64,18 @@ public class ScheduleAdapter extends SimpleCursorAdapter implements OnClickListe
 		TextView gameScore = (TextView) convertView.findViewById(R.id.score);
 		int nuscore = games.getInt(games.getColumnIndex("nuscore"));
 		int oppscore = games.getInt(games.getColumnIndex("oppscore"));
+		boolean overtime = Boolean.parseBoolean(games.getString(games.getColumnIndex("overtime")));
 		
 		if (nuscore < 0 || oppscore < 0) {
 			gameScore.setText("");
 		} else {
-			gameScore.setText(nuscore + "-" + oppscore);
+			String score = nuscore + "-" + oppscore;
+			
+			if (overtime) {
+				score = score + " (OT)";
+			}
+			
+			gameScore.setText(score);
 			
 			if (nuscore > oppscore) {
 				gameScore.setTextColor(Color.GREEN);
