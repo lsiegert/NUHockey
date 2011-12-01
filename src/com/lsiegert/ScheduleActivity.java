@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class ScheduleActivity extends ListActivity {
 	private GamesDbAdapter dbHelper = null;
@@ -121,6 +122,7 @@ public class ScheduleActivity extends ListActivity {
 	   builder.setTitle("View games by");
 	   builder.setItems(items, new DialogInterface.OnClickListener() {
 	       public void onClick(DialogInterface dialog, int item) {
+	           //Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
 	    	   String s = items[item].toString();
 	    	   if (s.equalsIgnoreCase("Season")) {
 	    		   showGamesBySeason("2011-12");
@@ -141,6 +143,7 @@ public class ScheduleActivity extends ListActivity {
 	   builder.setTitle("Choose a season");
 	   builder.setItems(items, new DialogInterface.OnClickListener() {
 	       public void onClick(DialogInterface dialog, int item) {
+	           //Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
 	           showGamesBySeason(items[item].toString());
 	           listView.requestLayout();
 	       }
