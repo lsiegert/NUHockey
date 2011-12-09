@@ -38,6 +38,7 @@ public class StatsActivity extends ListActivity {
     	String homeRecord = dbHelper.getRecordByLocation("home");
     	String awayRecord = dbHelper.getRecordByLocation("away");
     	String neutralRecord = dbHelper.getRecordByLocation("neutral");
+    	String overtimeRecord = dbHelper.getOvertimeRecord();
     	int winsAtAgganis = dbHelper.getNumOfWinsAtagganis();
     	int numTeams = dbHelper.getNumOfTeams();
     	int goals = dbHelper.getNumOfGoals();
@@ -49,7 +50,8 @@ public class StatsActivity extends ListActivity {
             R.layout.list_item, new String[] { "Overall: " + record,
         									   "Home: " + homeRecord,
         									   "Away: " + awayRecord,
-        									   "Neutral: " + neutralRecord}));
+        									   "Neutral: " + neutralRecord,
+        									   "Overtime: " + overtimeRecord}));
         
         adapter.addSection("Statistics", new ArrayAdapter<String>(this,  
                 R.layout.list_item, new String[] { "Goals: " + goals,

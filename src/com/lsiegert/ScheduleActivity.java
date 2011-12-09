@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class ScheduleActivity extends ListActivity {
 	private GamesDbAdapter dbHelper = null;
@@ -32,10 +31,9 @@ public class ScheduleActivity extends ListActivity {
 
 		dbHelper.open();
 
-		Cursor seasons = getAllSeasons();
-		startManagingCursor(seasons);
-		String season = seasons.getString(0);
-		showGamesBySeason(season);
+		Cursor seasons = dbHelper.getAllSeasons();
+        startManagingCursor(seasons);
+        if (seasons.moveToFirst()) showGamesBySeason(seasons.getString(0));
 	}
 
 	private Cursor getAllSeasons() {

@@ -3,6 +3,7 @@ package com.lsiegert;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ public class ScheduleAdapter extends SimpleCursorAdapter implements OnClickListe
 	private Context context;
 	private Cursor games;
 	private GamesDbAdapter dbHelper;
+	private static final String TAG = "NUHockey";
 
 	public ScheduleAdapter(Context context,
 							int layout,
@@ -64,11 +66,18 @@ public class ScheduleAdapter extends SimpleCursorAdapter implements OnClickListe
 		TextView gameScore = (TextView) convertView.findViewById(R.id.score);
 		int nuscore = games.getInt(games.getColumnIndex("nuscore"));
 		int oppscore = games.getInt(games.getColumnIndex("oppscore"));
+		boolean overtime = games.getString(games.getColumnIndex("overtime")).equals("1");
 		
 		if (nuscore < 0 || oppscore < 0) {
 			gameScore.setText("");
 		} else {
-			gameScore.setText(nuscore + "-" + oppscore);
+			String score = nuscore + "-" + oppscore;
+			
+			if (overtime) {
+				score = score + " (OT)";
+			}
+			
+			gameScore.setText(score);
 			
 			if (nuscore > oppscore) {
 				gameScore.setTextColor(Color.GREEN);

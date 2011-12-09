@@ -21,6 +21,7 @@ public class GamesDbAdapter {
 	public static final String OPPONENT = "opponent";
 	public static final String SEASON = "season";
 	public static final String NUSCORE = "nuscore";
+	public static final String OVERTIME = "overtime";
 	public static final String DATE = "date";
 	public static final String UPDATED = "updated";
 	public static final String ATTENDED = "attended";
@@ -47,7 +48,7 @@ public class GamesDbAdapter {
 	}
 
 	public long createGame(int id, String date, String season, String opponent,
-			int nuscore, int oppscore, String location) {
+			int nuscore, int oppscore, String location, boolean overtime) {
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(ID, id);
 		initialValues.put(DATE, date);
@@ -56,12 +57,13 @@ public class GamesDbAdapter {
 		initialValues.put(NUSCORE, nuscore);
 		initialValues.put(OPPSCORE, oppscore);
 		initialValues.put(LOCATION, location);
+		initialValues.put(OVERTIME, overtime);
 
 		return mDb.insert("games", null, initialValues);
 	}
 
 	public boolean updateGame(int id, String date, String season,
-			String opponent, int nuscore, int oppscore, String location) {
+			String opponent, int nuscore, int oppscore, String location, boolean overtime) {
 		ContentValues values = new ContentValues();
 		values.put(ID, id);
 		values.put(DATE, date);
@@ -70,6 +72,7 @@ public class GamesDbAdapter {
 		values.put(NUSCORE, nuscore);
 		values.put(OPPSCORE, oppscore);
 		values.put(LOCATION, location);
+		values.put(OVERTIME, overtime);
 
 		return mDb.update("games", values, ID + "=" + id, null) > 0;
 	}
@@ -138,7 +141,7 @@ public class GamesDbAdapter {
 	// Get all games for the given season
 	public Cursor getGamesBySeason(String season) {
 		String query = "select games._id, games.date, games.season, games.opponent, "
-				+ "games.nuscore, games.oppscore, games.location, attended.attended"
+				+ "games.nuscore, games.oppscore, games.location, games.overtime, attended.attended"
 				+ " from games left outer join attended on games._id=attended.attended"
 				+ " where season = ? order by date";
 		return mDb.rawQuery(query, new String[] { season });
@@ -147,13 +150,13 @@ public class GamesDbAdapter {
 	// Get all games for the given opponent
 	public Cursor getGamesByOpponent(String opponent) {
 		String query = "select games._id, games.date, games.season, games.opponent, "
-				+ "games.nuscore, games.oppscore, games.location, attended.attended"
+				+ "games.nuscore, games.oppscore, games.location, games.overtime, attended.attended"
 				+ " from games left outer join attended on games._id=attended.attended"
 				+ " where opponent = ? order by date";
 		return mDb.rawQuery(query, new String[] { opponent });
 	}
 
-	// W-L-T record across all completed games in the given season
+	// W-L-T record across all games in the given season
 	public String getRecordBySeason(String season) {
 		String wins = "select games._id from games where nuscore > oppscore and season=?";
 		String losses = "select games._id from games where nuscore < oppscore and season=?";
@@ -164,8 +167,9 @@ public class GamesDbAdapter {
 		int t = mDb.rawQuery(ties, seasons).getCount();
 		return w + "-" + l + "-" + t;
 	}
+
 	
-	// W-L-T record across all completed games against the given opponent
+	// W-L-T record across all  games against the given opponent
 	public String getRecordByOpponent(String opponent) {
 		String wins = "select games._id from games where nuscore > oppscore and opponent=?";
 		String losses = "select games._id from games where nuscore < oppscore and opponent=?";
@@ -194,6 +198,18 @@ public class GamesDbAdapter {
 		String losses = "select games._id from games, attended where nuscore < oppscore and games._id=attended.attended and location=?";
 		String ties = "select games._id from games, attended where nuscore = oppscore and games._id=attended.attended and location=?";
 		String[] args = new String[] { location };
+		int w = mDb.rawQuery(wins, args).getCount();
+		int l = mDb.rawQuery(losses, args).getCount();
+		int t = mDb.rawQuery(ties, args).getCount();
+		return w + "-" + l + "-" + t;
+	}
+
+	// W-L-T record across overtime games the user has attended
+	public String getOvertimeRecord() {
+		String wins = "select games._id from games, attended where nuscore > oppscore and games._id=attended.attended and overtime=?";
+		String losses = "select games._id from games, attended where nuscore < oppscore and games._id=attended.attended and overtime=?";
+		String ties = "select games._id from games, attended where nuscore = oppscore and games._id=attended.attended and overtime=?";
+		String[] args = new String[] { "1" };
 		int w = mDb.rawQuery(wins, args).getCount();
 		int l = mDb.rawQuery(losses, args).getCount();
 		int t = mDb.rawQuery(ties, args).getCount();
@@ -231,13 +247,13 @@ public class GamesDbAdapter {
 
 	private static class DatabaseHelper extends SQLiteOpenHelper {
 		private static final String DATABASE_NAME = "gamedata";
-		private static final int DATABASE_VERSION = 1;
+		private static final int DATABASE_VERSION = 3;
 
 		private static final String GAMES_TABLE_CREATE = "create table games("
 				+ ID + " integer primary key, " + DATE + " text not null,"
 				+ SEASON + " text not null," + OPPONENT + " text not null,"
 				+ NUSCORE + " integer," + OPPSCORE + " integer," + LOCATION
-				+ " text not null" + ");";
+				+ " text not null," + OVERTIME + " boolean" + ");";
 
 		private static final String UPDATED_TABLE_CREATE = "create table updated("
 				+ ID
@@ -245,7 +261,7 @@ public class GamesDbAdapter {
 				+ UPDATED
 				+ " text not null" + ");";
 
-		private static final String ATTENDED_TABLE_CREATE = "create table attended("
+		private static final String ATTENDED_TABLE_CREATE = "create table if not exists attended("
 				+ ID
 				+ " integer primary key autoincrement, "
 				+ ATTENDED
@@ -266,7 +282,6 @@ public class GamesDbAdapter {
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			db.execSQL("DROP TABLE IF EXISTS games");
 			db.execSQL("DROP TABLE IF EXISTS updated");
-			db.execSQL("DROP TABLE IF EXISTS attended");
 			onCreate(db);
 		}
 
